@@ -22,9 +22,41 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+
+
+    const database  = client.db("ngTech")
+    const brandCollection = database.collection("brands");
+    const productCollection = database.collection("product");
+
+
+    app.get('/brands', async(req, res) => {
+      const cursor = brandCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get('/products', async(req, res) => {
+      const cursor = productCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });  
+   
+    app.post('/products', async(req, res) => {
+      const addProduct = req.body;
+      const result = await productCollection.insertOne(addProduct);
+      res.send(result);
+    });
+
+    app.get('/products/:id', async(req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
+
     
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log("Ready to connect");
   } finally {
     // await client.close();
   }
@@ -33,9 +65,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Welcome to our server')
 })
 
 app.listen(port, (req, res) => {
-    console.log(`Coffee making server is running: ${port}`)
+    console.log(`NG Tech server is running: ${port}`)
 });
