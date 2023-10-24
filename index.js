@@ -27,6 +27,8 @@ async function run() {
     const database  = client.db("ngTech")
     const brandCollection = database.collection("brands");
     const productCollection = database.collection("product");
+    const userCollection = database.collection("user");
+    const cartCollection = database.collection("cart");
 
 
     app.get('/brands', async(req, res) => {
@@ -76,6 +78,43 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/products', async(req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.get('/users', async(req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });  
+   
+    app.post('/users', async(req, res) => {
+      const addUser = req.body;
+      const result = await userCollection.insertOne(addUser);
+      res.send(result);
+    });
+
+    app.get('/cart', async(req, res) => {
+      const cursor = cartCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });  
+   
+    app.post('/cart', async(req, res) => {
+      const addCart = req.body;
+      const result = await cartCollection.insertOne(addCart);
+      res.send(result);
+    });
+
+    app.delete('/cart/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = { _id: id };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    });
     
     await client.db("admin").command({ ping: 1 });
     console.log("Ready to connect");
