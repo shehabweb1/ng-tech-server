@@ -23,11 +23,9 @@ async function run() {
   try {
     await client.connect();
 
-
     const database  = client.db("ngTech")
     const brandCollection = database.collection("brands");
     const productCollection = database.collection("product");
-    const userCollection = database.collection("user");
     const cartCollection = database.collection("cart");
 
 
@@ -78,18 +76,6 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/users', async(req, res) => {
-      const cursor = userCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    });  
-   
-    app.post('/users', async(req, res) => {
-      const addUser = req.body;
-      const result = await userCollection.insertOne(addUser);
-      res.send(result);
-    });
-
     app.get('/cart', async(req, res) => {
       const cursor = cartCollection.find();
       const result = await cursor.toArray();
@@ -109,7 +95,7 @@ async function run() {
       res.send(result);
     });
     
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Ready to connect");
   } finally {
     // await client.close();
@@ -119,9 +105,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Welcome to our server')
+  res.send('Welcome to our server')
 })
 
 app.listen(port, (req, res) => {
-    console.log(`NG Tech server is running: ${port}`)
+  console.log(`NG Tech server is running: ${port}`)
 });
